@@ -26,13 +26,13 @@ void initNode(struct Node *head, int n) {
  * @param n - data that the new node should hold
  */
 void addNode(struct Node *head, int n) {
-    Node *tempNode = head;
-  while(tempNode->next != nullptr){
-     tempNode = tempNode->next;
+    Node *tempNode = head; //to not mess up current head
+  while(tempNode->next != nullptr){ //checks if it is the last node in the list
+     tempNode = tempNode->next; //continuse to traverse if not
   }
-    tempNode->next = new Node;
-    tempNode = tempNode->next;
-    tempNode->data = n;
+    tempNode->next = new Node; //creates new node and sets it to the las nodes next
+    tempNode = tempNode->next; //traverses to the new last node
+    tempNode->data = n; //sets the new nodes data to n
 }
 
 /**
@@ -41,10 +41,11 @@ void addNode(struct Node *head, int n) {
  * @param n - data that the new node should hold
  */
 void insertFront(struct Node **head, int n) {
-    Node *temp = new Node;
-    temp->data = n;
-    temp->next = *head;
-    *head = temp;
+    Node *temp = new Node; //creates new node in heap
+    temp->data = n; //sets data of the new node to n
+    temp->next = *head; //sets the next of the new node to the current head
+    *head = temp; //updates the head to the new head
+    //**** order is very important so you don't lose the old head and cause memory leak
 }
 
 /**
@@ -52,16 +53,16 @@ void insertFront(struct Node **head, int n) {
  * @param head  - pointer to the head of the list
  */
 void display(struct Node *head) {
+    if (head == nullptr){
+        cout << "Nothing to display";
+        return;
+    }
     Node *tempNode = head;
   while(tempNode->next != nullptr){
       cout << tempNode->data << endl;
       tempNode = tempNode->next;
   }
-    if(tempNode != nullptr) {
         cout << tempNode->data << endl;
-    } else {
-        cout << "nothing to display";
-    }
 }
 
 /**
@@ -71,15 +72,15 @@ void display(struct Node *head) {
  * @return - pointer to the node found.
  */
 struct Node *searchNode(struct Node *head, int n) {
-    Node *tempNode = head;
-    while(tempNode->data != n){
-        if(tempNode->next == nullptr){
-            tempNode = nullptr;
-            break;
+    Node *tempNode = head; //to not mess with the head pointer
+    while(tempNode->data != n){ //traverses data until a node with value n is found
+        if(tempNode->next == nullptr){ //checks if the node is the last node
+            tempNode = nullptr;//assigns tempnode to null to return it if the desired node isn't found
+            break;//breaks out of while loop b/c the desired node wasn't found
         }
-        tempNode = tempNode->next;
+        tempNode = tempNode->next; //sets tempNode to the next node to continue traversing
     }
-    return tempNode;
+    return tempNode; //returns the found node or null
 }
 
 /**
@@ -91,32 +92,25 @@ struct Node *searchNode(struct Node *head, int n) {
 bool deleteNode(struct Node **head, Node *ptrDel) {
   //TODO
     Node *current = *head;
-    Node *last;
-    //to keep track of last node
-    while(current != ptrDel){
-        //keeps looking until ptrDel is found
-        if(current->next == nullptr){
-            //if the next node is null, break out of function by returning false
+    Node *last; //to keep track of last node
+    while(current != ptrDel) {  //keeps looking until desired node is found
+        if (current->next == nullptr) { //if the desired node isn't found by last node
             return false;
         }
-        last = current;
-        current = current ->next;
-        //update last to current and current to next
+        last = current; //otherwise, update last and current
+        current = current->next;
     }
     //requested node is found
-    if(current == *head){
-        //if the node is the first node in the list
-        current = current->next;
-        //to make sure you don't lost he adress of the "new" head
-        delete *head;
-        //delete the first node
-        *head = current;
-        //assign the "new" head to head
-    }else {
-        last->next = current->next;
-        //assigns the last node's next to the current node's next to skip the current node
-        delete current;
-        //deletes
+    if(current == *head){ //if the node is the first node in the list
+        current = current->next; //to make sure you don't lost he address of the "new" head
+        delete *head; //delete the first node
+        *head = current; //assign the "new" head to head
+    }else if(current->next == nullptr){ //if the last entry is the one to be deleted
+        last->next = nullptr; //change the new "last" node's next to null
+        delete current; //delete it
+    }else{
+        last->next = current->next; //assigns the last node's next to the current node's next to skip the current node
+        delete current; //deletes
     }
   return true;
 }
@@ -203,9 +197,9 @@ int main() {
   if(deleteNode(&head,ptrDelete)) {
       cout << "Node " << numDel << " deleted!\n";
   }
-    ptrDelete = searchNode(head,35);
+    ptrDelete = searchNode(head,40);
     if(deleteNode(&head,ptrDelete)) {
-        cout << "Node " << 35 << " deleted!\n";
+        cout << "Node " << 40 << " deleted!\n";
     }
   display(head);
   cout << "The list is reversed\n";
