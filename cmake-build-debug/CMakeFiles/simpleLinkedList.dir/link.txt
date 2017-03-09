@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11 -g   CMakeFiles/simpleLinkedList.dir/main.cpp.o  -o simpleLinkedList -rdynamic 
